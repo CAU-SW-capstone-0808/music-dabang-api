@@ -1,0 +1,25 @@
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      repositories:
+        enabled: false
+
+  application:
+    name: music_dabang_api
+
+  # local, dev, prod
+  profiles:
+    active: dev
+
+jwt:
+  private-key: classpath:private_key.pem
+  public-key: classpath:public_key.pem
+
+logging:
+  level:
+    root: info
+  file:
+    name: ./logs/app.log
+    path: ./logs

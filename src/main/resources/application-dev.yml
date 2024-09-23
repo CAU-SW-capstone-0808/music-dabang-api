@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    hikari:
+      # docker container에 접속
+      jdbc-url: jdbc:mysql://aidoldb.cqcxxtw5wiev.ap-northeast-2.rds.amazonaws.com:3306/mdabang?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+    username: admin
+    password: t65V4aAy7SiSfYHrQHgZ
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  #    url: jdbc:mysql://localhost:3306/api?useSSL=false&serverTimezone=Asia/Seoul
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQLDialect
+server:
+  port: 80
