@@ -1,14 +1,19 @@
 package com.anarchyadventure.music_dabang_api.dto.user;
 
 import jakarta.validation.constraints.NotEmpty;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@RequiredArgsConstructor
+@Data
+@NoArgsConstructor
 public class TokenDTO {
     @NotEmpty
-    private final String accessToken;
+    private String accessToken;
     @NotEmpty
-    private final String refreshToken;
+    private String refreshToken;
+
+    public TokenDTO(String accessToken, String refreshToken) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+    }
 }

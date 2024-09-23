@@ -10,17 +10,31 @@ public class PageRequest {
     /**
      * cursor of the last item of the previous page
      */
-    private final String cursor;
+    private String cursor;
     /**
      * default: 20
      */
-    private final Integer size;
+    private Integer size;
     /**
      * default: "id"
      */
-    private final String sortBy;
+    private String sortBy;
     /**
      * desc or asc
      */
-    private final String sortOrder;
+    private String sortOrder;
+
+    public Long parseCursorLong() {
+        if (cursor == null)
+            return null;
+        try {
+            return Long.parseLong(getCursor());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public Integer getSize() {
+        return size == null ? 20 : size;
+    }
 }

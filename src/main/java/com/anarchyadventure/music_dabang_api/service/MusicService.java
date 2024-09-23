@@ -1,6 +1,7 @@
 package com.anarchyadventure.music_dabang_api.service;
 
 import com.anarchyadventure.music_dabang_api.dto.common.PageRequest;
+import com.anarchyadventure.music_dabang_api.dto.common.PageResponse;
 import com.anarchyadventure.music_dabang_api.dto.music.MusicContentDTO;
 import com.anarchyadventure.music_dabang_api.dto.music.playlist.PlaylistDTO;
 import com.anarchyadventure.music_dabang_api.dto.music.playlist.PlaylistItemDTO;
@@ -29,19 +30,28 @@ public class MusicService {
     private final PlaylistItemRepository playlistItemRepository;
 
     @Transactional(readOnly = true)
-    public List<PlaylistDTO> findAllPlaylists(PageRequest pageRequest) {
-        List<Playlist> playlists = playlistRepository.findAllByUsedForSystemTrue();
-        return playlists.stream()
+    public PageResponse<PlaylistDTO> findAllPlaylists(PageRequest pageRequest) {
+        List<Playlist> playlists = playlistRepository.paginateMainPlaylist(pageRequest);
+        List<PlaylistDTO> data = playlists.stream()
             .map(PlaylistDTO::from)
             .toList();
+        return PageResponse.<PlaylistDTO>builder()
+            .data(data)
+            .cursor(data.isEmpty() ? null : data.get(data.size() - 1).getId().toString())
+            .build();
     }
 
     @Transactional(readOnly = true)
-    public List<PlaylistItemDTO> findAllMyPlaylistItems() {
-        List<PlaylistItem> items = playlistItemRepository.findAllMyPlaylistItems(SecurityHandler.getUserAuth().getId());
-        return items.stream()
+    public PageResponse<PlaylistItemDTO> findAllMyPlaylistItems(PageRequest pageRequest) {
+        List<PlaylistItem> items = playlistItemRepository
+            .paginateMyPlaylistItems(SecurityHandler.getUserAuth().getId(), pageRequest);
+        List<PlaylistItemDTO> data = items.stream()
             .map(PlaylistItemDTO::from)
             .toList();
+        return PageResponse.<PlaylistItemDTO>builder()
+            .data(data)
+            .cursor(data.isEmpty() ? null : data.get(data.size() - 1).getId().toString())
+            .build();
     }
 
     public PlaylistItemDTO addMyPlaylistItem(Long musicId) {
@@ -57,20 +67,28 @@ public class MusicService {
     }
 
     @Transactional(readOnly = true)
-    public List<PlaylistItemDTO> findPlaylistItems(Long playlistId) {
-        List<PlaylistItem> items = playlistItemRepository.findAllByUserIdAndPlaylistId(
-            SecurityHandler.getUserAuth().getId(), playlistId);
-        return items.stream()
+    public PageResponse<PlaylistItemDTO> findPlaylistItems(Long playlistId, PageRequest pageRequest) {
+        List<PlaylistItem> items = playlistItemRepository
+            .paginatePlaylistItems(SecurityHandler.getUserAuth().getId(), playlistId, pageRequest);
+        List<PlaylistItemDTO> data = items.stream()
             .map(PlaylistItemDTO::from)
             .toList();
+        return PageResponse.<PlaylistItemDTO>builder()
+            .data(data)
+            .cursor(data.isEmpty() ? null : data.get(data.size() - 1).getId().toString())
+            .build();
     }
 
     @Transactional(readOnly = true)
-    public List<MusicContentDTO> searchMusic(String query) {
+    public PageResponse<MusicContentDTO> searchMusic(String query, PageRequest pageRequest) {
         List<MusicContent> musicContents = musicContentRepository
             .findAllByKeyword(query);
-        return musicContents.stream()
+        List<MusicContentDTO> data = musicContents.stream()
             .map(MusicContentDTO::from)
             .toList();
+        return PageResponse.<MusicContentDTO>builder()
+            .data(data)
+            .cursor(data.isEmpty() ? null : data.get(data.size() - 1).getId().toString())
+            .build();
     }
 }
