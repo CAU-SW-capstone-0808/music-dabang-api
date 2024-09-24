@@ -2,7 +2,6 @@ package com.anarchyadventure.music_dabang_api.repository.music;
 
 import com.anarchyadventure.music_dabang_api.dto.common.PageRequest;
 import com.anarchyadventure.music_dabang_api.entity.music.PlaylistItem;
-import com.anarchyadventure.music_dabang_api.entity.music.QPlaylistItem;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,8 @@ public class PlaylistItemCustomRepositoryImpl implements PlaylistItemCustomRepos
             .join(musicContent.artist).fetchJoin()
             .where(playlistItem.user.id.eq(userId))
             .where(playlistItem.playlist.isNull())
-            .limit(pageRequest.getSize());
+            .limit(pageRequest.getSize())
+            .orderBy(pageRequest.isDesc() ? playlistItem.id.desc() : playlistItem.id.asc());
 
         Long cursorLong = pageRequest.parseCursorLong();
         if (cursorLong != null) {
@@ -44,7 +44,8 @@ public class PlaylistItemCustomRepositoryImpl implements PlaylistItemCustomRepos
             .where(playlistItem.playlist.id.eq(playlistId).and(
                 playlistItem.user.id.eq(userId).or(playlistItem.playlist.usedForSystem.isTrue())
             ))
-            .limit(pageRequest.getSize());
+            .limit(pageRequest.getSize())
+            .orderBy(pageRequest.isDesc() ? playlistItem.id.desc() : playlistItem.id.asc());
 
         Long cursorLong = pageRequest.parseCursorLong();
         if (cursorLong != null) {

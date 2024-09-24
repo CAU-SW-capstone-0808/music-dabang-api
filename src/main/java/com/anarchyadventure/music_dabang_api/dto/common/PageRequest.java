@@ -20,7 +20,7 @@ public class PageRequest {
      */
     private String sortBy;
     /**
-     * desc or asc
+     * desc or asc (default: desc)
      */
     private String sortOrder;
 
@@ -36,5 +36,11 @@ public class PageRequest {
 
     public Integer getSize() {
         return size == null ? 20 : size;
+    }
+
+    public boolean isDesc() {
+        if (sortOrder == null)
+            return true;
+        return "desc".equals(sortOrder);
     }
 }

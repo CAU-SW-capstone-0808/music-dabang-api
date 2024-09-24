@@ -59,6 +59,7 @@ public class JwtConverter {
 
         try {
             if (logoutRepository.isLogout(jwt.getTokenValue())) {
+                log.info("jwt token is logout token={}", jwt.getTokenValue());
                 return defaultAuthToken(null);
             }
         } catch (RuntimeException e) {

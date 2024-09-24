@@ -19,7 +19,8 @@ public class PlaylistCustomRepositoryImpl implements PlaylistCustomRepository {
     @Override
     public List<Playlist> paginateMainPlaylist(PageRequest pageRequest) {
         JPAQuery<Playlist> resultQuery = queryFactory.selectFrom(playlist)
-            .limit(pageRequest.getSize());
+            .limit(pageRequest.getSize())
+            .orderBy(pageRequest.isDesc() ? playlist.id.desc() : playlist.id.asc());
 
         Long cursorLong = pageRequest.parseCursorLong();
         if (cursorLong != null) {

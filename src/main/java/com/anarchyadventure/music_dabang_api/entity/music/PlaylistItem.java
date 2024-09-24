@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 /**
  * 추후 확장 -> PlayList 추가
@@ -30,6 +31,10 @@ public class PlaylistItem extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Playlist playlist;
+
+    @Column(nullable = false)
+    @ColumnDefault("1")
+    private Integer orderingNum = 1;
 
     public PlaylistItem(User user, MusicContent musicContent, Playlist playlist) {
         this.user = user;

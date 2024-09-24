@@ -6,8 +6,10 @@ import com.anarchyadventure.music_dabang_api.dto.music.MusicContentDTO;
 import com.anarchyadventure.music_dabang_api.dto.music.playlist.PlaylistDTO;
 import com.anarchyadventure.music_dabang_api.dto.music.playlist.PlaylistItemDTO;
 import com.anarchyadventure.music_dabang_api.entity.music.MusicContent;
+import com.anarchyadventure.music_dabang_api.entity.music.MusicContentType;
 import com.anarchyadventure.music_dabang_api.entity.music.Playlist;
 import com.anarchyadventure.music_dabang_api.entity.music.PlaylistItem;
+import com.anarchyadventure.music_dabang_api.entity.user.User;
 import com.anarchyadventure.music_dabang_api.repository.music.MusicContentRepository;
 import com.anarchyadventure.music_dabang_api.repository.music.PlaylistItemRepository;
 import com.anarchyadventure.music_dabang_api.repository.music.PlaylistRepository;
@@ -79,10 +81,21 @@ public class MusicService {
             .build();
     }
 
+    public PlaylistItemDTO addPlaylistItem(Long playlistId, Long musicContentId) {
+        User user = SecurityHandler.getUserAuth();
+        MusicContent musicContent = musicContentRepository.findByIdOpt(musicContentId)
+            .orElseThrow(() -> new EntityNotFoundException("음악 정보를 찾을 수 없습니다."));
+        Playlist playlist = playlistRepository.findByUserIdAndPlaylistId(user.getId(), playlistId)
+            .orElseThrow(() -> new EntityNotFoundException("플레이 리스트를 찾을 수 없습니다."));
+        PlaylistItem item = new PlaylistItem(user, musicContent, playlist);
+        playlistItemRepository.save(item);
+        return PlaylistItemDTO.from(item);
+    }
+
     @Transactional(readOnly = true)
-    public PageResponse<MusicContentDTO> searchMusic(String query, PageRequest pageRequest) {
+    public PageResponse<MusicContentDTO> searchMusic(String query, MusicContentType musicContentType, PageRequest pageRequest) {
         List<MusicContent> musicContents = musicContentRepository
-            .findAllByKeyword(query);
+            .search(query, musicContentType, pageRequest);
         List<MusicContentDTO> data = musicContents.stream()
             .map(MusicContentDTO::from)
             .toList();
@@ -90,5 +103,10 @@ public class MusicService {
             .data(data)
             .cursor(data.isEmpty() ? null : data.get(data.size() - 1).getId().toString())
             .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> autoCompleteSearchKeyword(String query, Integer limit) {
+        return musicContentRepository.autoComplete(query, limit);
     }
 }
