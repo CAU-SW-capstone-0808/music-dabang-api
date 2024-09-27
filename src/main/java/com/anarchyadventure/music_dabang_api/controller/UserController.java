@@ -3,6 +3,7 @@ package com.anarchyadventure.music_dabang_api.controller;
 import com.anarchyadventure.music_dabang_api.dto.user.TokenDTO;
 import com.anarchyadventure.music_dabang_api.dto.user.UserDTO;
 import com.anarchyadventure.music_dabang_api.dto.user.UserJoinDTO;
+import com.anarchyadventure.music_dabang_api.dto.user.UserLoginDTO;
 import com.anarchyadventure.music_dabang_api.exceptions.BaseException;
 import com.anarchyadventure.music_dabang_api.exceptions.ErrorCode;
 import com.anarchyadventure.music_dabang_api.service.UserService;
@@ -34,6 +35,11 @@ public class UserController {
     @PostMapping("/join")
     public ResponseEntity<TokenDTO> joinWithPhone(@Validated @RequestBody UserJoinDTO userJoinDTO) {
         return ResponseEntity.ok(userService.joinWithPhone(userJoinDTO));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<TokenDTO> loginWithPhone(@Validated @RequestBody UserLoginDTO userLoginDTO) {
+        return ResponseEntity.ok(userService.loginWithPhone(userLoginDTO));
     }
 
     @PostMapping("/token/refresh")

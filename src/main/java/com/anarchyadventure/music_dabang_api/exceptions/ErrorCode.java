@@ -16,7 +16,7 @@ public enum ErrorCode {
     FORBIDDEN("잘못된 접근입니다", 403),
     UNVERIFIED("검증되지 않은 필드가 있습니다", 403),
     UNAUTHORIZED("권한이 없습니다.", 401),
-    UNAUTHENTICATED("인증에 실패하였습니다", 401),
+    UNAUTHENTICATED("인증에 실패하였습니다", 403),
     INVALID_ACCESS("잘못된 접근입니다.", 400),
     INVALID_TOKEN("유효하지 않은 토큰값입니다.", 401),
     INVALID_STATE("잘못된 상태입니다.", 409),

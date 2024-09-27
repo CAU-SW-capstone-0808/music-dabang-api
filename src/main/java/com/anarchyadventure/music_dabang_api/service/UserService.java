@@ -1,18 +1,17 @@
 package com.anarchyadventure.music_dabang_api.service;
 
-import com.anarchyadventure.music_dabang_api.dto.user.KakaoUserDTO;
-import com.anarchyadventure.music_dabang_api.dto.user.TokenDTO;
-import com.anarchyadventure.music_dabang_api.dto.user.UserDTO;
-import com.anarchyadventure.music_dabang_api.dto.user.UserJoinDTO;
+import com.anarchyadventure.music_dabang_api.dto.user.*;
 import com.anarchyadventure.music_dabang_api.entity.user.OAuthProvider;
 import com.anarchyadventure.music_dabang_api.entity.user.User;
 import com.anarchyadventure.music_dabang_api.exceptions.EntityAlreadyExistException;
+import com.anarchyadventure.music_dabang_api.exceptions.UnauthenticatedException;
 import com.anarchyadventure.music_dabang_api.repository.UserRepository;
 import com.anarchyadventure.music_dabang_api.security.CustomLogoutHandler;
 import com.anarchyadventure.music_dabang_api.security.JwtHandler;
 import com.anarchyadventure.music_dabang_api.security.SecurityHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +26,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtHandler jwtHandler;
     private final CustomLogoutHandler logoutHandler;
+    private final PasswordEncoder passwordEncoder;
 
     public TokenDTO loginWithKakao(String accessToken) {
         KakaoUserDTO kakaoUser = kakaoApiHelper.getUserInfo(accessToken);
@@ -55,16 +55,25 @@ public class UserService {
             throw new EntityAlreadyExistException("phone number already exists");
         }
         User user = new User(
-            OAuthProvider.NONE,
-            userJoinDTO.getPhone(),
             userJoinDTO.getNickname(),
             null,
             userJoinDTO.getPhone(),
+            passwordEncoder.encode(userJoinDTO.getPassword()),
             userJoinDTO.getBirthday(),
             userJoinDTO.getGender()
         );
         userRepository.save(user);
         return jwtHandler.createTokenInfo(user);
+    }
+
+    public TokenDTO loginWithPhone(UserLoginDTO userLoginDTO) {
+        User user = userRepository.findByPhone(userLoginDTO.getPhone())
+            .orElseThrow(() -> new EntityAlreadyExistException("phone number not exists"));
+        if (passwordEncoder.matches(userLoginDTO.getPassword(), user.getPassword())) {
+            return jwtHandler.createTokenInfo(user);
+        } else {
+            throw new UnauthenticatedException("password not match");
+        }
     }
 
     public TokenDTO refreshToken(TokenDTO token) {

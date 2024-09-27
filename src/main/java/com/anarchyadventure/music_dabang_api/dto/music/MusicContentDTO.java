@@ -1,6 +1,7 @@
 package com.anarchyadventure.music_dabang_api.dto.music;
 
 import com.anarchyadventure.music_dabang_api.entity.music.MusicContent;
+import com.anarchyadventure.music_dabang_api.entity.music.MusicContentType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,6 +14,7 @@ public class MusicContentDTO {
     private final String videoContentUrl;
     private final String title;
     private final ArtistDTO artist;
+    private final MusicContentType musicContentType;
 
     public static MusicContentDTO from(MusicContent music) {
         return new MusicContentDTO(
@@ -21,7 +23,8 @@ public class MusicContentDTO {
             music.getMusicContentUrl(),
             music.getVideoContentUrl(),
             music.getTitle(),
-            ArtistDTO.from(music.getArtist())
+            ArtistDTO.from(music.getArtist()),
+            music.getMusicContentType()
         );
     }
 }

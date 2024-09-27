@@ -71,6 +71,16 @@ public class User extends BaseEntity {
         this.gender = gender;
     }
 
+    public User(String nickname, String profileImageUrl, String phone, String password, LocalDate birthday, Gender gender) {
+        this.oauthProvider = OAuthProvider.NONE;
+        this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
+        this.phone = phone;
+        this.password = password;
+        this.birthday = birthday;
+        this.gender = gender;
+    }
+
     public void onLogin() {
         this.lastLoginAt = LocalDateTime.now();
     }

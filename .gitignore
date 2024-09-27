@@ -38,3 +38,5 @@ out/
 
 *.pem
 /logs/
+
+**/application-dev.yml

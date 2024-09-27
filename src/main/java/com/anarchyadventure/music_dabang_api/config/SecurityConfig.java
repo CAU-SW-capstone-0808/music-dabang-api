@@ -80,7 +80,7 @@ public class SecurityConfig {
             // 경로 권한 설정
             .authorizeHttpRequests(auth -> auth
                 // 권한 없는 경로
-                .requestMatchers("/user/oauth/kakao", "/health")
+                .requestMatchers("/user/oauth/kakao", "/health", "/user/join", "/user/login", "/privacy-agreement.html")
                 .permitAll()
                 // 토큰 새로고침 경로 : REFRESH authority 필요 (RefreshToken만 받음)
                 .requestMatchers(POST, "/user/token/refresh")
@@ -104,6 +104,8 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedOrigin("http://localhost:7000");
         configuration.addAllowedOrigin("http://localhost:8080");
+        configuration.addAllowedOrigin("http://localhost:8081");
+        configuration.addAllowedOrigin("https://musicdb.cast-ing.kr");
         configuration.addAllowedMethod("*"); // allow all HTTP methods
         configuration.addAllowedHeader("*"); // allow all HTTP headers
 
