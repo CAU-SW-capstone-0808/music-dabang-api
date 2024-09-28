@@ -30,6 +30,11 @@ public class MusicController {
         return ResponseEntity.ok(musicService.findAllMyPlaylistItems(pageRequest));
     }
 
+    @GetMapping("/playlists/my/items/count")
+    public ResponseEntity<Long> getMyPlaylistItemsCount() {
+        return ResponseEntity.ok(musicService.myPlaylistItemCount());
+    }
+
     @PostMapping("/playlists/my/items")
     public ResponseEntity<PlaylistItemDTO> addMyPlaylistItem(@RequestParam(name = "music_id") Long musicId) {
         return ResponseEntity.ok(musicService.addMyPlaylistItem(musicId));
@@ -52,6 +57,11 @@ public class MusicController {
     public ResponseEntity<PlaylistItemDTO> addPlaylistItem(
         @PathVariable Long playlistId, @RequestParam(name = "music_id") Long musicId) {
         return ResponseEntity.ok(musicService.addPlaylistItem(playlistId, musicId));
+    }
+
+    @GetMapping("/playlists/{playlistId}/items/count")
+    public ResponseEntity<Long> playlistItemCounts(@PathVariable Long playlistId) {
+        return ResponseEntity.ok(musicService.playlistItemCount(playlistId));
     }
 
     @GetMapping("/search")

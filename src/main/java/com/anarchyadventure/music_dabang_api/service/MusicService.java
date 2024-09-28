@@ -56,6 +56,11 @@ public class MusicService {
             .build();
     }
 
+    @Transactional(readOnly = true)
+    public Long myPlaylistItemCount() {
+        return playlistItemRepository.countAllMyPlaylistItems(SecurityHandler.getUserAuth().getId());
+    }
+
     public PlaylistItemDTO addMyPlaylistItem(Long musicId) {
         MusicContent music = musicContentRepository.findByIdOpt(musicId)
             .orElseThrow(() -> new EntityNotFoundException("Music not found"));
@@ -90,6 +95,11 @@ public class MusicService {
         PlaylistItem item = new PlaylistItem(user, musicContent, playlist);
         playlistItemRepository.save(item);
         return PlaylistItemDTO.from(item);
+    }
+
+    @Transactional(readOnly = true)
+    public Long playlistItemCount(Long playlistId) {
+        return playlistItemRepository.countAllByPlaylistId(playlistId);
     }
 
     @Transactional(readOnly = true)

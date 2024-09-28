@@ -39,4 +39,6 @@ public interface PlaylistItemRepository extends JpaRepository<PlaylistItem, Long
 //        " JOIN FETCH mc.artist" +
 //        " WHERE pi.user.id = :userId AND pi.playlist IS NULL")
 //    List<PlaylistItem> findAllMyPlaylistItems(Long userId);
+
+    Long countAllByPlaylistId(Long playlistId);
 }

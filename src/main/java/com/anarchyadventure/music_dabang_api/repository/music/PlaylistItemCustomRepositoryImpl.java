@@ -54,4 +54,13 @@ public class PlaylistItemCustomRepositoryImpl implements PlaylistItemCustomRepos
 
         return resultQuery.fetch();
     }
+
+    @Override
+    public Long countAllMyPlaylistItems(Long userId) {
+        return queryFactory.select(playlistItem.count())
+            .from(playlistItem)
+            .where(playlistItem.user.id.eq(userId))
+            .where(playlistItem.playlist.isNull())
+            .fetchOne();
+    }
 }

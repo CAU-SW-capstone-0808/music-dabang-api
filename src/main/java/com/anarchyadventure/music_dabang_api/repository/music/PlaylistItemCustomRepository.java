@@ -9,4 +9,6 @@ public interface PlaylistItemCustomRepository {
     List<PlaylistItem> paginateMyPlaylistItems(Long userId, PageRequest pageRequest);
 
     List<PlaylistItem> paginatePlaylistItems(Long userId, Long playlistId, PageRequest pageRequest);
+
+    Long countAllMyPlaylistItems(Long userId);
 }
