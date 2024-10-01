@@ -25,11 +25,12 @@ public class PlaylistItemCustomRepositoryImpl implements PlaylistItemCustomRepos
             .where(playlistItem.user.id.eq(userId))
             .where(playlistItem.playlist.isNull())
             .limit(pageRequest.getSize())
-            .orderBy(pageRequest.isDesc() ? playlistItem.id.desc() : playlistItem.id.asc());
+            .orderBy(playlistItem.orderingNum.asc(), playlistItem.id.desc());
+//            .orderBy(pageRequest.isDesc() ? playlistItem.id.desc() : playlistItem.id.asc());
 
         Long cursorLong = pageRequest.parseCursorLong();
         if (cursorLong != null) {
-            resultQuery = resultQuery.where(playlistItem.id.lt(cursorLong));
+            resultQuery = resultQuery.where(playlistItem.orderingNum.gt(cursorLong));
         }
 
         return resultQuery.fetch();
@@ -45,11 +46,12 @@ public class PlaylistItemCustomRepositoryImpl implements PlaylistItemCustomRepos
                 playlistItem.user.id.eq(userId).or(playlistItem.playlist.usedForSystem.isTrue())
             ))
             .limit(pageRequest.getSize())
-            .orderBy(pageRequest.isDesc() ? playlistItem.id.desc() : playlistItem.id.asc());
+            .orderBy(playlistItem.orderingNum.asc(), playlistItem.id.desc());
+//            .orderBy(pageRequest.isDesc() ? playlistItem.id.desc() : playlistItem.id.asc());
 
         Long cursorLong = pageRequest.parseCursorLong();
         if (cursorLong != null) {
-            resultQuery = resultQuery.where(playlistItem.id.lt(cursorLong));
+            resultQuery = resultQuery.where(playlistItem.orderingNum.gt(cursorLong));
         }
 
         return resultQuery.fetch();
@@ -62,5 +64,36 @@ public class PlaylistItemCustomRepositoryImpl implements PlaylistItemCustomRepos
             .where(playlistItem.user.id.eq(userId))
             .where(playlistItem.playlist.isNull())
             .fetchOne();
+    }
+
+    @Override
+    public Long lastOrderingNumInPlaylist(Long playlistId) {
+        return queryFactory.select(playlistItem.orderingNum)
+            .from(playlistItem)
+            .where(playlistItem.playlist.id.eq(playlistId))
+            .orderBy(playlistItem.orderingNum.desc())
+            .fetchFirst();
+    }
+
+    @Override
+    public Long lastOrderingNumInMyMusicList(Long userId) {
+        return queryFactory.select(playlistItem.orderingNum)
+            .from(playlistItem)
+            .where(playlistItem.user.id.eq(userId))
+            .where(playlistItem.playlist.isNull())
+            .orderBy(playlistItem.orderingNum.desc())
+            .fetchFirst();
+    }
+
+    @Override
+    public boolean isMusicItemInMyMusicList(Long userId, Long musicId) {
+        Long count = queryFactory.select(playlistItem.count())
+            .from(playlistItem)
+            .leftJoin(playlistItem.playlist)
+            .where(playlistItem.playlist.isNull())
+            .where(playlistItem.user.id.eq(userId))
+            .where(playlistItem.musicContent.id.eq(musicId))
+            .fetchOne();
+        return count != null && count > 0;
     }
 }

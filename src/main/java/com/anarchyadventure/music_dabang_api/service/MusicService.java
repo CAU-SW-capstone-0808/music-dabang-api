@@ -44,7 +44,7 @@ public class MusicService {
     }
 
     @Transactional(readOnly = true)
-    public PageResponse<PlaylistItemDTO> findAllMyPlaylistItems(PageRequest pageRequest) {
+    public PageResponse<PlaylistItemDTO> findAllMyMusicListItems(PageRequest pageRequest) {
         List<PlaylistItem> items = playlistItemRepository
             .paginateMyPlaylistItems(SecurityHandler.getUserAuth().getId(), pageRequest);
         List<PlaylistItemDTO> data = items.stream()
@@ -52,7 +52,7 @@ public class MusicService {
             .toList();
         return PageResponse.<PlaylistItemDTO>builder()
             .data(data)
-            .cursor(data.isEmpty() ? null : data.get(data.size() - 1).getId().toString())
+            .cursor(data.isEmpty() ? null : data.get(data.size() - 1).getOrder().toString())
             .build();
     }
 
@@ -61,16 +61,33 @@ public class MusicService {
         return playlistItemRepository.countAllMyPlaylistItems(SecurityHandler.getUserAuth().getId());
     }
 
-    public PlaylistItemDTO addMyPlaylistItem(Long musicId) {
+    public PlaylistItemDTO addMyMusicListItem(Long musicId) {
         MusicContent music = musicContentRepository.findByIdOpt(musicId)
             .orElseThrow(() -> new EntityNotFoundException("Music not found"));
-        PlaylistItem item = new PlaylistItem(SecurityHandler.getUserAuth(), music, null);
+        User user = SecurityHandler.getUserAuth();
+        PlaylistItem item = new PlaylistItem(user, music, null);
+        Long lastOrderingNum = playlistItemRepository.lastOrderingNumInMyMusicList(user.getId());
+        if (lastOrderingNum != null) {
+            item.setOrderingNum(lastOrderingNum + 1000L);
+        }
         playlistItemRepository.save(item);
         return PlaylistItemDTO.from(item);
     }
 
+    @Transactional(readOnly = true)
+    public boolean isInMyMusicList(Long musicId) {
+        return playlistItemRepository.isMusicItemInMyMusicList(SecurityHandler.getUserAuth().getId(), musicId);
+    }
+
     public void deletePlaylistItem(List<Long> itemIds) {
         playlistItemRepository.deleteAllByItemIdsAndUserId(itemIds, SecurityHandler.getUserAuth().getId());
+    }
+
+    public PlaylistItemDTO changePlaylistItemOrder(Long itemId, Long order) {
+        PlaylistItem item = playlistItemRepository.findByIdOpt(itemId)
+            .orElseThrow(() -> new EntityNotFoundException("Playlist item not found"));
+        item.setOrderingNum(order);
+        return PlaylistItemDTO.from(item);
     }
 
     @Transactional(readOnly = true)
@@ -93,6 +110,10 @@ public class MusicService {
         Playlist playlist = playlistRepository.findByUserIdAndPlaylistId(user.getId(), playlistId)
             .orElseThrow(() -> new EntityNotFoundException("플레이 리스트를 찾을 수 없습니다."));
         PlaylistItem item = new PlaylistItem(user, musicContent, playlist);
+        Long lastOrderingNum = playlistItemRepository.lastOrderingNumInPlaylist(playlistId);
+        if (lastOrderingNum != null) {
+            item.setOrderingNum(lastOrderingNum + 1000L);
+        }
         playlistItemRepository.save(item);
         return PlaylistItemDTO.from(item);
     }

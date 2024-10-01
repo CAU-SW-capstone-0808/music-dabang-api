@@ -52,6 +52,12 @@ public class AdminService {
         return MusicContentDTO.from(musicContent);
     }
 
+    public List<MusicContentDTO> findAllMusic() {
+        return musicContentRepository.findAll().stream()
+            .map(MusicContentDTO::from)
+            .toList();
+    }
+
     public MusicContentDTO editMusic(Long musicId, NewMusicContentDTO newMusicContentDTO) {
         log.info("editMusic: {}", newMusicContentDTO);
         MusicContent musicContent = musicContentRepository.findByIdOpt(musicId)
@@ -62,6 +68,7 @@ public class AdminService {
             newMusicContentDTO.getVideoContentUrl(),
             newMusicContentDTO.getTitle()
         );
+        musicContentRepository.save(musicContent);
         return MusicContentDTO.from(musicContent);
     }
 

@@ -32,6 +32,11 @@ public class AdminController {
         return ResponseEntity.ok(adminService.uploadMusic(newMusicContentDTO));
     }
 
+    @GetMapping("/music/all")
+    public ResponseEntity<List<MusicContentDTO>> getAllMusic() {
+        return ResponseEntity.ok(adminService.findAllMusic());
+    }
+
     @PatchMapping("/music/{musicId}")
     public ResponseEntity<MusicContentDTO> editMusic(
         @PathVariable Long musicId, @Validated @RequestBody NewMusicContentDTO newMusicContentDTO) {

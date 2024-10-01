@@ -24,6 +24,12 @@ public interface PlaylistItemRepository extends JpaRepository<PlaylistItem, Long
     @Query("SELECT pi FROM PlaylistItem pi" +
         " JOIN FETCH pi.musicContent mc" +
         " JOIN FETCH mc.artist" +
+        " WHERE pi.id = :id AND pi.user.id = :userId")
+    Optional<PlaylistItem> findByIdAndUserId(Long id, Long userId);
+
+    @Query("SELECT pi FROM PlaylistItem pi" +
+        " JOIN FETCH pi.musicContent mc" +
+        " JOIN FETCH mc.artist" +
         " WHERE pi.playlist.id = :playlistId")
     List<PlaylistItem> findAllByPlaylistId(Long playlistId);
 

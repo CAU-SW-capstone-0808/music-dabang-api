@@ -11,4 +11,10 @@ public interface PlaylistItemCustomRepository {
     List<PlaylistItem> paginatePlaylistItems(Long userId, Long playlistId, PageRequest pageRequest);
 
     Long countAllMyPlaylistItems(Long userId);
+
+    Long lastOrderingNumInPlaylist(Long playlistId);
+
+    Long lastOrderingNumInMyMusicList(Long userId);
+
+    boolean isMusicItemInMyMusicList(Long userId, Long musicId);
 }

@@ -8,11 +8,13 @@ import lombok.Data;
 public class PlaylistItemDTO {
     private Long id;
     private MusicContentDTO musicContent;
+    private Long order;
 
     public static PlaylistItemDTO from(PlaylistItem playlistItem) {
         PlaylistItemDTO playlistItemDTO = new PlaylistItemDTO();
         playlistItemDTO.setId(playlistItem.getId());
         playlistItemDTO.setMusicContent(MusicContentDTO.from(playlistItem.getMusicContent()));
+        playlistItemDTO.setOrder(playlistItem.getOrderingNum());
         return playlistItemDTO;
     }
 }

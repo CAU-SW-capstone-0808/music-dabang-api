@@ -27,7 +27,7 @@ public class MusicController {
 
     @GetMapping("/playlists/my/items")
     public ResponseEntity<PageResponse<PlaylistItemDTO>> getMyPlaylistItems(@ModelAttribute PageRequest pageRequest) {
-        return ResponseEntity.ok(musicService.findAllMyPlaylistItems(pageRequest));
+        return ResponseEntity.ok(musicService.findAllMyMusicListItems(pageRequest));
     }
 
     @GetMapping("/playlists/my/items/count")
@@ -37,7 +37,12 @@ public class MusicController {
 
     @PostMapping("/playlists/my/items")
     public ResponseEntity<PlaylistItemDTO> addMyPlaylistItem(@RequestParam(name = "music_id") Long musicId) {
-        return ResponseEntity.ok(musicService.addMyPlaylistItem(musicId));
+        return ResponseEntity.ok(musicService.addMyMusicListItem(musicId));
+    }
+
+    @GetMapping("/playlists/my/items/in")
+    public ResponseEntity<Boolean> isMyMusicItem(@RequestParam(name = "music_id") Long musicId) {
+        return ResponseEntity.ok(musicService.isInMyMusicList(musicId));
     }
 
     @DeleteMapping("/playlists/items")
@@ -45,6 +50,12 @@ public class MusicController {
         @RequestParam(name = "item_id") List<Long> itemIds) {
         musicService.deletePlaylistItem(itemIds);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/playlists/items/{itemId}/order")
+    public ResponseEntity<PlaylistItemDTO> changePlaylistItemOrder(
+        @PathVariable Long itemId, @RequestParam(name = "order") Long order) {
+        return ResponseEntity.ok(musicService.changePlaylistItemOrder(itemId, order));
     }
 
     @GetMapping("/playlists/{playlistId}/items")
