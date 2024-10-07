@@ -8,6 +8,8 @@ import java.time.LocalDate;
 @Data
 public class KakaoUserDTO {
     private Long id;
+
+    // 외부 API 필드명에 의존하지 않도록 @JsonProperty 사용
     private KakaoUserInfo kakao_account;
 
     @Data
@@ -20,6 +22,7 @@ public class KakaoUserDTO {
         private Profile profile;
 
         public LocalDate getBirth() {
+            // StringUtils 사용
             if (birthday == null || birthyear == null) {
                 return null;
             }
@@ -34,6 +37,7 @@ public class KakaoUserDTO {
         }
 
         public Gender getGender() {
+            // null 보다는 UNKNOWN 고려
             if (gender == null) {
                 return null;
             }

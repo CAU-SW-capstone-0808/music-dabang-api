@@ -68,6 +68,7 @@ public class AdminService {
             newMusicContentDTO.getVideoContentUrl(),
             newMusicContentDTO.getTitle()
         );
+        // jpa 더티 체킹을 이용하여 update
         musicContentRepository.save(musicContent);
         return MusicContentDTO.from(musicContent);
     }

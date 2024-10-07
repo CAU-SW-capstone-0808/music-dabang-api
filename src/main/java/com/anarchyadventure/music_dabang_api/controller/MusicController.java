@@ -84,6 +84,7 @@ public class MusicController {
         return ResponseEntity.ok(musicService.searchMusic(query, mcType, pageRequest));
     }
 
+    // 단어 구분 통일시키기 auto-complete
     @GetMapping("/search/autocomplete")
     public ResponseEntity<List<String>> autoCompleteSearchKeyword(
         @RequestParam(name = "q") String query,

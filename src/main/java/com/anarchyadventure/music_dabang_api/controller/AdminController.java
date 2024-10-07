@@ -22,6 +22,7 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
 
+    // 자원에 대한 복수형 표기
     @PostMapping("/artist")
     public ResponseEntity<ArtistDTO> createArtist(@Validated @RequestBody NewArtistDTO newArtistDTO) {
         return ResponseEntity.ok(adminService.createArtist(newArtistDTO));

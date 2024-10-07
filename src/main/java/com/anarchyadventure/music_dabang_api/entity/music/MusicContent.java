@@ -38,6 +38,7 @@ public class MusicContent extends BaseEntity {
     private MusicContentType musicContentType = MusicContentType.MUSIC;
 
     public MusicContent(String thumbnailUrl, String musicContentUrl, String videoContentUrl, String title, Artist artist) {
+        // 필수값, 길이 제한 등에 대한 validation (+ dto 보다는 생성자에 기록)
         this.thumbnailUrl = thumbnailUrl;
         this.musicContentUrl = musicContentUrl;
         this.videoContentUrl = videoContentUrl;
