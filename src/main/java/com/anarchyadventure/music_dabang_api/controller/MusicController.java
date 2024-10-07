@@ -36,8 +36,7 @@ public class MusicController {
     }
 
     @PostMapping("/playlists/my/items")
-    public ResponseEntity<PlaylistItemDTO> addMyPlaylistItem(// 요청 파라미터는 스네이크 케이스보다는 카멜 케이스
-                                                             @RequestParam(name = "music_id") Long musicId) {
+    public ResponseEntity<PlaylistItemDTO> addMyPlaylistItem(@RequestParam(name = "music_id") Long musicId) {
         return ResponseEntity.ok(musicService.addMyMusicListItem(musicId));
     }
 
