@@ -29,6 +29,7 @@ public abstract class SecurityHandler {
         return null;
     }
 
+    // service 에서 매번 해당 메소드를 사용하는 것이 아니라, ArgumentResolver 로 편하게 처리하기
     public static User getUserAuth(UserRole... userRoles) {
         User user = getUser();
         if (user == null) throw new UnauthorizedException();

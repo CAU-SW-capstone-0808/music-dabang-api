@@ -36,7 +36,8 @@ public class MusicController {
     }
 
     @PostMapping("/playlists/my/items")
-    public ResponseEntity<PlaylistItemDTO> addMyPlaylistItem(@RequestParam(name = "music_id") Long musicId) {
+    public ResponseEntity<PlaylistItemDTO> addMyPlaylistItem(// 요청 파라미터는 스네이크 케이스보다는 카멜 케이스
+                                                             @RequestParam(name = "music_id") Long musicId) {
         return ResponseEntity.ok(musicService.addMyMusicListItem(musicId));
     }
 
@@ -84,6 +85,7 @@ public class MusicController {
         return ResponseEntity.ok(musicService.searchMusic(query, mcType, pageRequest));
     }
 
+    // 단어 구분 통일시키기 auto-complete
     @GetMapping("/search/autocomplete")
     public ResponseEntity<List<String>> autoCompleteSearchKeyword(
         @RequestParam(name = "q") String query,

@@ -8,6 +8,7 @@ public enum MusicContentType {
 
     @JsonCreator
     public static MusicContentType from(String value) {
+        // java 8 stream 사용하기
         for (MusicContentType type : MusicContentType.values()) {
             if (type.name().equalsIgnoreCase(value)) {
                 return type;

@@ -37,6 +37,7 @@ public class UserService {
             user = new User(
                 OAuthProvider.KAKAO,
                 kakaoUser.getId().toString(),
+                // 디미터 법칙 고려
                 kakaoUser.getKakao_account().getProfile().getNickname(),
                 kakaoUser.getKakao_account().getProfile().getProfile_image_url(),
                 kakaoUser.getKakao_account().getPhone_number(),

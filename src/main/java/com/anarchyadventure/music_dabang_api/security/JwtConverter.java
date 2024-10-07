@@ -70,6 +70,8 @@ public class JwtConverter {
         try {
             Long userId = Long.parseLong(jwt.getSubject());
             Optional<User> userOpt = userRepository.findById(userId);
+
+            // early return 고려
             if (userOpt.isPresent()) {
                 principalDetails = new PrincipalDetails(userOpt.get());
                 if (tokenType.equals(ACCESS_TOKEN_NAME)) {
