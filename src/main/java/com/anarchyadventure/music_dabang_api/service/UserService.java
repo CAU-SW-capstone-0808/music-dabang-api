@@ -3,12 +3,14 @@ package com.anarchyadventure.music_dabang_api.service;
 import com.anarchyadventure.music_dabang_api.dto.user.*;
 import com.anarchyadventure.music_dabang_api.entity.user.OAuthProvider;
 import com.anarchyadventure.music_dabang_api.entity.user.User;
+import com.anarchyadventure.music_dabang_api.entity.user.UserAge;
 import com.anarchyadventure.music_dabang_api.exceptions.EntityAlreadyExistException;
 import com.anarchyadventure.music_dabang_api.exceptions.UnauthenticatedException;
 import com.anarchyadventure.music_dabang_api.repository.UserRepository;
 import com.anarchyadventure.music_dabang_api.security.CustomLogoutHandler;
 import com.anarchyadventure.music_dabang_api.security.JwtHandler;
 import com.anarchyadventure.music_dabang_api.security.SecurityHandler;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -89,7 +91,15 @@ public class UserService {
         logoutHandler.tokenLogout(token.getRefreshToken());
     }
 
+    @Transactional(readOnly = true)
     public UserDTO getMe() {
         return UserDTO.from(SecurityHandler.getUserAuth());
+    }
+
+    public UserDTO fillUserAge(UserAge userAge) {
+        User user = userRepository.findById(SecurityHandler.getUserAuth().getId())
+            .orElseThrow(() -> new EntityNotFoundException("user not exists"));
+        user.setUserAge(userAge);
+        return UserDTO.from(user);
     }
 }

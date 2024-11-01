@@ -4,8 +4,10 @@ import com.anarchyadventure.music_dabang_api.dto.user.TokenDTO;
 import com.anarchyadventure.music_dabang_api.dto.user.UserDTO;
 import com.anarchyadventure.music_dabang_api.dto.user.UserJoinDTO;
 import com.anarchyadventure.music_dabang_api.dto.user.UserLoginDTO;
+import com.anarchyadventure.music_dabang_api.entity.user.UserAge;
 import com.anarchyadventure.music_dabang_api.exceptions.BaseException;
 import com.anarchyadventure.music_dabang_api.exceptions.ErrorCode;
+import com.anarchyadventure.music_dabang_api.exceptions.InvalidParameterException;
 import com.anarchyadventure.music_dabang_api.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,5 +58,14 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getMe() {
         return ResponseEntity.ok(userService.getMe());
+    }
+
+    @PostMapping("/me/age")
+    public ResponseEntity<UserDTO> fillUserAge(@RequestParam String age) {
+        UserAge userAge = UserAge.from(age);
+        if (userAge == null) {
+            throw new InvalidParameterException();
+        }
+        return ResponseEntity.ok(userService.fillUserAge(userAge));
     }
 }

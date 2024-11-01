@@ -99,7 +99,7 @@ public class MusicService {
             .toList();
         return PageResponse.<PlaylistItemDTO>builder()
             .data(data)
-            .cursor(data.isEmpty() ? null : data.get(data.size() - 1).getId().toString())
+            .cursor(data.isEmpty() ? null : data.get(data.size() - 1).getOrder().toString())
             .build();
     }
 

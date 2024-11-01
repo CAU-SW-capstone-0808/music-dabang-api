@@ -48,6 +48,11 @@ public class User extends BaseEntity {
 
     private LocalDate birthday;
 
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10)
+    private UserAge userAge;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 1)
     private Gender gender;
