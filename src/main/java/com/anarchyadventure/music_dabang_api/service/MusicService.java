@@ -67,7 +67,11 @@ public class MusicService {
         User user = SecurityHandler.getUserAuth();
         PlaylistItem item = new PlaylistItem(user, music, null);
         Long lastOrderingNum = playlistItemRepository.lastOrderingNumInMyMusicList(user.getId());
+        // addPlaylistItem 과 중복 로직
         if (lastOrderingNum != null) {
+            // 매직 넘버보다는 상수를 사용
+            // 천 단위는 언더바 사용하는 습관
+            // setter 사용은 지양. 생성자로 처리할 수 있을 거 같은데 시도해보기.
             item.setOrderingNum(lastOrderingNum + 1000L);
         }
         playlistItemRepository.save(item);
