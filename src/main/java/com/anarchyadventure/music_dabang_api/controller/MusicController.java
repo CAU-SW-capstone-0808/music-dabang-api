@@ -2,6 +2,7 @@ package com.anarchyadventure.music_dabang_api.controller;
 
 import com.anarchyadventure.music_dabang_api.dto.common.PageRequest;
 import com.anarchyadventure.music_dabang_api.dto.common.PageResponse;
+import com.anarchyadventure.music_dabang_api.dto.music.ArtistDTO;
 import com.anarchyadventure.music_dabang_api.dto.music.MusicContentDTO;
 import com.anarchyadventure.music_dabang_api.dto.music.playlist.PlaylistDTO;
 import com.anarchyadventure.music_dabang_api.dto.music.playlist.PlaylistItemDTO;
@@ -18,6 +19,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MusicController {
     private final MusicService musicService;
+
+    @GetMapping("/artists")
+    public ResponseEntity<List<ArtistDTO>> getArtists() {
+        return ResponseEntity.ok(musicService.findAllArtists());
+    }
 
     // 메인 화면에 있는 모든 플레이리스트를 가져옴
     @GetMapping("/playlists/main")

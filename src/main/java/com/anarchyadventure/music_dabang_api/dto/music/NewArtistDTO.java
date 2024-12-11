@@ -5,4 +5,6 @@ import lombok.Data;
 @Data
 public class NewArtistDTO {
     private String name;
+    private String description;
+    private String profileImageUrl;
 }

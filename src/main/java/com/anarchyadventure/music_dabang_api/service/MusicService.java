@@ -2,6 +2,7 @@ package com.anarchyadventure.music_dabang_api.service;
 
 import com.anarchyadventure.music_dabang_api.dto.common.PageRequest;
 import com.anarchyadventure.music_dabang_api.dto.common.PageResponse;
+import com.anarchyadventure.music_dabang_api.dto.music.ArtistDTO;
 import com.anarchyadventure.music_dabang_api.dto.music.MusicContentDTO;
 import com.anarchyadventure.music_dabang_api.dto.music.playlist.PlaylistDTO;
 import com.anarchyadventure.music_dabang_api.dto.music.playlist.PlaylistItemDTO;
@@ -10,6 +11,7 @@ import com.anarchyadventure.music_dabang_api.entity.music.MusicContentType;
 import com.anarchyadventure.music_dabang_api.entity.music.Playlist;
 import com.anarchyadventure.music_dabang_api.entity.music.PlaylistItem;
 import com.anarchyadventure.music_dabang_api.entity.user.User;
+import com.anarchyadventure.music_dabang_api.repository.music.ArtistRepository;
 import com.anarchyadventure.music_dabang_api.repository.music.MusicContentRepository;
 import com.anarchyadventure.music_dabang_api.repository.music.PlaylistItemRepository;
 import com.anarchyadventure.music_dabang_api.repository.music.PlaylistRepository;
@@ -30,6 +32,12 @@ public class MusicService {
     private final MusicContentRepository musicContentRepository;
     private final PlaylistRepository playlistRepository;
     private final PlaylistItemRepository playlistItemRepository;
+    private final ArtistRepository artistRepository;
+
+    @Transactional(readOnly = true)
+    public List<ArtistDTO> findAllArtists() {
+        return artistRepository.findAll().stream().map(ArtistDTO::from).toList();
+    }
 
     @Transactional(readOnly = true)
     public PageResponse<PlaylistDTO> findAllPlaylists(PageRequest pageRequest) {

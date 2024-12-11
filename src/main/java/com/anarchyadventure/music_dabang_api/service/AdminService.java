@@ -38,7 +38,11 @@ public class AdminService {
 
     public ArtistDTO createArtist(NewArtistDTO newArtistDTO) {
         log.info("createArtist: {}", newArtistDTO);
-        Artist artist = new Artist(newArtistDTO.getName());
+        Artist artist = new Artist(
+                newArtistDTO.getName(),
+                newArtistDTO.getDescription(),
+                newArtistDTO.getProfileImageUrl()
+        );
         artistRepository.save(artist);
         return ArtistDTO.from(artist);
     }

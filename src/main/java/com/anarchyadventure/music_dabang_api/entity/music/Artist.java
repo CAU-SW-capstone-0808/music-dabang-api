@@ -18,12 +18,20 @@ public class Artist extends BaseEntity {
     @Column(name = "artist_id")
     private Long id;
 
+    @Column(nullable = false)
     private String name;
+
+    private String description;
+
+    @Column(length = 1024)
+    private String profileImageUrl;
     
     @OneToMany(mappedBy = "artist", cascade = CascadeType.REMOVE)
     private List<MusicContent> musicContentList = new ArrayList<>();
 
-    public Artist(String name) {
+    public Artist(String name, String description, String profileImageUrl) {
         this.name = name;
+        this.description = description;
+        this.profileImageUrl = profileImageUrl;
     }
 }
