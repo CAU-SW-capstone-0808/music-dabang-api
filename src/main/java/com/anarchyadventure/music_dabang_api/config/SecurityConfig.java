@@ -106,6 +106,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://localhost:8080");
         configuration.addAllowedOrigin("http://localhost:8081");
         configuration.addAllowedOrigin("https://musicdb.cast-ing.kr");
+        configuration.addAllowedOrigin("https://mdabang.jdn.kr");
         configuration.addAllowedMethod("*"); // allow all HTTP methods
         configuration.addAllowedHeader("*"); // allow all HTTP headers
 
