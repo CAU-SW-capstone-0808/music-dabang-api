@@ -1,21 +1,26 @@
 package com.anarchyadventure.music_dabang_api.service;
 
+import com.anarchyadventure.music_dabang_api.dto.post.FandomPostDTO;
 import com.anarchyadventure.music_dabang_api.entity.post.FandomPost;
 import com.anarchyadventure.music_dabang_api.entity.post.FandomPostComment;
 import com.anarchyadventure.music_dabang_api.entity.post.FandomPostLike;
 import com.anarchyadventure.music_dabang_api.entity.user.User;
 import com.anarchyadventure.music_dabang_api.entity.music.Artist;
+import com.anarchyadventure.music_dabang_api.exceptions.EntityAlreadyExistException;
 import com.anarchyadventure.music_dabang_api.repository.music.ArtistRepository;
 import com.anarchyadventure.music_dabang_api.repository.post.FandomPostRepository;
 import com.anarchyadventure.music_dabang_api.repository.post.FandomPostCommentRepository;
 import com.anarchyadventure.music_dabang_api.repository.post.FandomPostLikeRepository;
 import com.anarchyadventure.music_dabang_api.security.SecurityHandler;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class PostService {
     private final FandomPostRepository fandomPostRepository;
@@ -23,58 +28,79 @@ public class PostService {
     private final FandomPostLikeRepository fandomPostLikeRepository;
     private final ArtistRepository artistRepository;
 
-    public FandomPost createPost(Long artistId, String title, String content) {
+    @Transactional
+    public FandomPostDTO.Main createPost(Long artistId, String title, String content) {
         User user = SecurityHandler.getUserAuth();
         Artist artist = artistRepository.findById(artistId)
                 .orElseThrow(() -> new RuntimeException("Artist not found"));
         FandomPost post = new FandomPost(user, artist, title, content);
-        return fandomPostRepository.save(post);
+        fandomPostRepository.save(post);
+        return FandomPostDTO.Main.from(post);
     }
 
-    public List<FandomPost> getPostsByArtist(Long artistId, String sortBy) {
+    public List<FandomPostDTO.Main> getPostsByArtist(Long artistId, String sortBy) {
+        List<FandomPost> posts;
         if ("createdAt".equalsIgnoreCase(sortBy)) {
-            return fandomPostRepository.findByArtistIdOrderByCreatedAtDesc(artistId); // 기본값: 최신순 정렬
+            // 기본값: 최신순 정렬
+            posts = fandomPostRepository.findByArtistIdOrderByCreatedAtDesc(artistId);
         } else {
-            return fandomPostRepository.findByArtistIdOrderByLikesDesc(artistId);
+            posts = fandomPostRepository.findByArtistIdOrderByLikesDesc(artistId);
         }
+        return posts.stream().map(FandomPostDTO.Main::from).toList();
     }
 
-    public FandomPost getPostById(Long postId) {
-        FandomPost post = fandomPostRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-        List<FandomPostComment> comments = fandomPostCommentRepository.findByFandomPostId(postId);
-        post.getComments().addAll(comments);
-
-        return post;
+    public FandomPostDTO.Main getPostById(Long postId) {
+        FandomPost post = fandomPostRepository.findByIdWithComments(postId)
+                .orElseThrow(EntityAlreadyExistException::new);
+        return FandomPostDTO.Main.from(post);
     }
 
-    public FandomPostComment addComment(Long fandomPostId, String content) {
+    @Transactional
+    public FandomPostDTO.Comment addComment(Long fandomPostId, String content) {
         User user = SecurityHandler.getUserAuth();
         FandomPost post = fandomPostRepository.findById(fandomPostId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
         FandomPostComment comment = new FandomPostComment(user, post, content);
-        return fandomPostCommentRepository.save(comment);
+        fandomPostCommentRepository.save(comment);
+        return FandomPostDTO.Comment.from(comment);
     }
 
-    public FandomPostComment addReply(Long parentId, String content) {
+    @Transactional
+    public FandomPostDTO.Comment addReply(Long postId, Long commentId, String content) {
         User user = SecurityHandler.getUserAuth();
-        FandomPostComment parentComment = fandomPostCommentRepository.findById(parentId)
-                .orElseThrow(() -> new RuntimeException("Parent comment not found"));
+        FandomPostComment parentComment = fandomPostCommentRepository.findByPostIdAndCommentId(postId, commentId)
+                .orElseThrow(() -> new EntityNotFoundException("Parent comment not found"));
         FandomPostComment reply = new FandomPostComment(user, parentComment, content);
-        return fandomPostCommentRepository.save(reply);
+        fandomPostCommentRepository.save(reply);
+        return FandomPostDTO.Comment.from(reply);
     }
 
+    public Boolean getPostLiked(Long postId) {
+        User user = SecurityHandler.getUserAuth();
+        return fandomPostLikeRepository.findByPostIdAndUserId(postId, user.getId()).isPresent();
+    }
+
+    @Transactional
     public void likePost(Long postId) {
         User user = SecurityHandler.getUserAuth();
         FandomPost post = fandomPostRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Post not found"));
 
         if (fandomPostLikeRepository.existsByUserAndFandomPost(user, post)) {
-            throw new RuntimeException("Already liked this post");
+            throw new EntityAlreadyExistException("Already liked this post");
         }
 
         fandomPostLikeRepository.save(new FandomPostLike(user, post));
         post.incrementLikes();
         fandomPostRepository.save(post);
+    }
+
+    @Transactional
+    public void cancelLikePost(Long postId) {
+        User user = SecurityHandler.getUserAuth();
+        FandomPostLike fandomPostLike = fandomPostLikeRepository.findByPostIdAndUserId(postId, user.getId())
+                .orElseThrow(EntityAlreadyExistException::new);
+        fandomPostLike.getFandomPost().decrementLikes();
+        fandomPostLikeRepository.delete(fandomPostLike);
     }
 }

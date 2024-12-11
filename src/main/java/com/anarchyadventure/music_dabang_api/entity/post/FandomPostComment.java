@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -35,8 +37,9 @@ public class FandomPostComment extends BaseEntity {
     private FandomPostComment parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FandomPostComment> replies = new ArrayList<>();
+    private Set<FandomPostComment> replies = new HashSet<>();
 
+    @Column(nullable = false, length = 1000)
     private String content;
 
     public FandomPostComment(User user, FandomPost fandomPost, String content) {//댓글생성

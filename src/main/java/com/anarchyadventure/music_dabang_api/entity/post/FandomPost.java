@@ -28,8 +28,10 @@ public class FandomPost extends BaseEntity {
     @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;
 
+    @Column(nullable = false, length = 300)
     private String title;
 
+    @Column(nullable = false, length = 10000)
     private String content;
 
     private int likes = 0;
@@ -40,6 +42,10 @@ public class FandomPost extends BaseEntity {
 
     public void incrementLikes() {
         this.likes++;
+    }
+
+    public void decrementLikes() {
+        this.likes--;
     }
 
     public FandomPost(User user, Artist artist, String title, String content) {
