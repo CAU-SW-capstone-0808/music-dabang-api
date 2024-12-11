@@ -7,6 +7,8 @@ import com.anarchyadventure.music_dabang_api.entity.user.User;
 import com.anarchyadventure.music_dabang_api.security.SecurityHandler;
 import com.anarchyadventure.music_dabang_api.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -38,10 +40,21 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
+    @GetMapping("/posts")
+    public ResponseEntity<List<FandomPostDTO.Main>> getPosts(@RequestParam(defaultValue = "createdAt") String sortBy) {
+        var posts = postService.getPosts(sortBy);
+        return ResponseEntity.ok(posts);
+    }
+
     @GetMapping("/posts/{postId}")
     public ResponseEntity<FandomPostDTO.Main> getPostById(@PathVariable Long postId) {
         var post = postService.getPostById(postId);
         return ResponseEntity.ok(post);
+    }
+
+    @GetMapping("/posts/{postId}/liked")
+    public ResponseEntity<Boolean> getPostLikes(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.getPostLiked(postId));
     }
 
     @PostMapping("/posts/{postId}/comments")

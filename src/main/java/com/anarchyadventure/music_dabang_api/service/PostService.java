@@ -49,10 +49,20 @@ public class PostService {
         return posts.stream().map(FandomPostDTO.Main::from).toList();
     }
 
+    public List<FandomPostDTO.Main> getPosts(String sortBy) {
+        List<FandomPost> posts = fandomPostRepository.findAll();
+        return posts.stream().map(FandomPostDTO.Main::from).toList();
+    }
+
     public FandomPostDTO.Main getPostById(Long postId) {
         FandomPost post = fandomPostRepository.findByIdWithComments(postId)
                 .orElseThrow(EntityAlreadyExistException::new);
         return FandomPostDTO.Main.from(post);
+    }
+
+    public Boolean getPostLikes(Long postId) {
+        User user = SecurityHandler.getUserAuth();
+        return fandomPostLikeRepository.findByPostIdAndUserId(postId, user.getId()).isPresent();
     }
 
     @Transactional

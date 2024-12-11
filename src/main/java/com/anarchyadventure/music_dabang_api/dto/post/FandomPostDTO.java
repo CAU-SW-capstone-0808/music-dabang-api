@@ -22,12 +22,11 @@ public class FandomPostDTO {
         private final String title;
         private final String content;
         private final int likes;
-        private final boolean liked;
         private final List<Comment> comments;
         private final LocalDateTime createdAt;
         private final LocalDateTime editedAt;
 
-        public static Main from(FandomPost post, boolean liked) {
+        public static Main from(FandomPost post) {
             return new Main(
                     post.getId(),
                     UserDTO.from(post.getUser()),
@@ -35,15 +34,10 @@ public class FandomPostDTO {
                     post.getTitle(),
                     post.getContent(),
                     post.getLikes(),
-                    liked,
                     post.getComments().stream().map(Comment::from).toList(),
                     post.getCreatedAt(),
                     post.getEditedAt()
             );
-        }
-
-        public static Main from(FandomPost post) {
-            return from(post, false);
         }
     }
 
