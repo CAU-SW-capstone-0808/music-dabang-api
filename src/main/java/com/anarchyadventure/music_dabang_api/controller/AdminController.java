@@ -27,6 +27,12 @@ public class AdminController {
         return ResponseEntity.ok(adminService.createArtist(newArtistDTO));
     }
 
+    @PatchMapping("/artist/{artistId}")
+    public ResponseEntity<ArtistDTO> editArtist(
+        @PathVariable Long artistId, @Validated @RequestBody NewArtistDTO newArtistDTO) {
+        return ResponseEntity.ok(adminService.editArtist(artistId, newArtistDTO));
+    }
+
     @PostMapping("/music")
     public ResponseEntity<MusicContentDTO> uploadMusic(@Validated @RequestBody NewMusicContentDTO newMusicContentDTO) {
         return ResponseEntity.ok(adminService.uploadMusic(newMusicContentDTO));

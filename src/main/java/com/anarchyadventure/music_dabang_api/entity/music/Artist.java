@@ -34,4 +34,10 @@ public class Artist extends BaseEntity {
         this.description = description;
         this.profileImageUrl = profileImageUrl;
     }
+
+    public void edit(String name, String description, String profileImageUrl) {
+        this.name = name;
+        this.description = description;
+        this.profileImageUrl = profileImageUrl;
+    }
 }

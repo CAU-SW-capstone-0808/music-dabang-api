@@ -29,6 +29,7 @@ import java.util.List;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AdminService {
     private final ArtistRepository artistRepository;
@@ -42,6 +43,19 @@ public class AdminService {
                 newArtistDTO.getName(),
                 newArtistDTO.getDescription(),
                 newArtistDTO.getProfileImageUrl()
+        );
+        artistRepository.save(artist);
+        return ArtistDTO.from(artist);
+    }
+
+    public ArtistDTO editArtist(Long artistId, NewArtistDTO newArtistDTO) {
+        log.info("editArtist: {}", newArtistDTO);
+        Artist artist = artistRepository.findById(artistId)
+            .orElseThrow(() -> new EntityNotFoundException("Artist not found"));
+        artist.edit(
+            newArtistDTO.getName(),
+            newArtistDTO.getDescription(),
+            newArtistDTO.getProfileImageUrl()
         );
         artistRepository.save(artist);
         return ArtistDTO.from(artist);
