@@ -68,4 +68,9 @@ public class UserController {
         }
         return ResponseEntity.ok(userService.fillUserAge(userAge));
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDTO> findUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.findUser(userId));
+    }
 }

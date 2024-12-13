@@ -40,7 +40,7 @@ public class UserService {
                 OAuthProvider.KAKAO,
                 kakaoUser.getId().toString(),
                 kakaoUser.getKakao_account().getProfile().getNickname(),
-                kakaoUser.getKakao_account().getProfile().getProfile_image_url(),
+                kakaoUser.getKakao_account().getProfile().getProfile_image_url().replace("http://", "https://"),
                 kakaoUser.getKakao_account().getPhone_number(),
                 kakaoUser.getKakao_account().getBirth(),
                 kakaoUser.getKakao_account().getGender()
@@ -100,6 +100,13 @@ public class UserService {
         User user = userRepository.findById(SecurityHandler.getUserAuth().getId())
             .orElseThrow(() -> new EntityNotFoundException("user not exists"));
         user.setUserAge(userAge);
+        return UserDTO.from(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserDTO findUser(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("user not exists"));
         return UserDTO.from(user);
     }
 }
